@@ -1,0 +1,40 @@
+group 'UCR-Inhouses'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+allprojects {
+    repositories {
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    implementation 'net.dv8tion:JDA:4.2.0_222'
+    implementation 'com.jagrosh:jda-utilities:3.0.5'
+    compileClasspath "com.github.jengelman.gradle.plugins:shadow:6.1.0"
+    compile 'com.github.taycaldwell:riot-api-java:4.3.0'
+    compile 'com.opencsv:opencsv:5.3'
+}
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:6.1.0'
+    }
+}
+
+shadowJar {
+    baseName = 'main'
+    classifier = null
+    version = null
+}
