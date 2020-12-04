@@ -2,10 +2,15 @@ package bot;
 
 import com.opencsv.bean.CsvBindByName;
 import net.dv8tion.jda.api.entities.Member;
+import net.rithms.riot.api.RiotApiException;
+import net.rithms.riot.api.endpoints.league.dto.LeaguePosition;
+import net.rithms.riot.api.endpoints.summoner.dto.Summoner;
+import net.rithms.riot.constant.Platform;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.Set;
 
 @SuppressWarnings("NullableProblems")
 public class Player implements Comparable<Player>
@@ -34,6 +39,9 @@ public class Player implements Comparable<Player>
     @CsvBindByName(column = "prev")
     private boolean prev;
 
+    @CsvBindByName(column = "rank")
+    private String rank;
+
     private Member member;
     private LocalDate lastPlayed;
     private LocalDate decayDate;
@@ -43,7 +51,7 @@ public class Player implements Comparable<Player>
 
     }
 
-    Player(String _id, String _ign, int _elo, int _wins, int _losses, int _streak, boolean _prev)
+    Player(String _id, String _ign, int _elo, int _wins, int _losses, int _streak, boolean _prev, String _rank)
     {
         lastPlayedStr = "12-31-2020";
         id = _id;
@@ -53,6 +61,7 @@ public class Player implements Comparable<Player>
         losses = _losses;
         streak = _streak;
         prev = _prev;
+        rank = _rank;
     }
 
     void win()
@@ -190,6 +199,16 @@ public class Player implements Comparable<Player>
     public int getStreak()
     {
         return streak;
+    }
+
+    public String getRank()
+    {
+        return rank;
+    }
+
+    public void setRank(String _rank)
+    {
+        rank = _rank;
     }
 
     Member getMember()
