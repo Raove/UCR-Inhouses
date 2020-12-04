@@ -21,6 +21,7 @@ repositories {
 dependencies {
     implementation 'net.dv8tion:JDA:4.2.0_222'
     implementation 'com.jagrosh:jda-utilities:3.0.5'
+    runtime 'org.slf4j:slf4j-simple:1.7.25'
     compileClasspath "com.github.jengelman.gradle.plugins:shadow:6.1.0"
     compile 'com.github.taycaldwell:riot-api-java:4.3.0'
     compile 'com.opencsv:opencsv:5.3'
