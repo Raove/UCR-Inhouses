@@ -68,7 +68,7 @@ public class Hub
         blist = new Blacklist("blacklist.txt");
 
         //Setup League API.
-        ApiConfig config = new ApiConfig().setKey("RGAPI-e89cd094-ff51-4d2a-88e1-c21439f40097");
+        ApiConfig config = new ApiConfig().setKey("RGAPI-3487139b-9678-4c64-a7be-cf3ab9964861");
         api = new RiotApi(config);
 
         //Create and assign the three rooms.
@@ -723,8 +723,8 @@ public class Hub
         cmdBuilder.addField("!draft","Start drafting when lobby is full", false);
         cmdBuilder.addField("!random","Randomly draft players in a lobby", false);
         cmdBuilder.addField("!remove discord@","Kick a player from a full lobby", false);
-        cmdBuilder.addField("!game # blue/red","Input win for match and side", false);
-        cmdBuilder.addField("!game # clear","Clears current game", false);
+        cmdBuilder.addField("!room # blue/red","Input win for match and side", false);
+        cmdBuilder.addField("!room # clear","Clears current game", false);
         cmdBuilder.addField("!giveElo @discord #","Gives discord user X elo and gives a win", false);
         cmdBuilder.addField("!takeElo @discord #","Takes X elo from discord user and takes a win", false);
         cmdBuilder.addField("!undo","Returns ladder to previous standings", false);
@@ -899,7 +899,7 @@ public class Hub
     {
         for (Role role : member.getRoles())
         {
-            if (role.getName().equals("OPG Moderator"))
+            if (role.getName().equals("Inhouse mod"))
             {
                 return true;
             }
@@ -1228,9 +1228,8 @@ public class Hub
                 } else if (activeRooms == 3) {
                     total += 2;
                 }
-
-                Inhouse.hostChannel.sendFile(new File("temp2.png"), "Game #" +
-                        (total++ + 1) + "! Good luck and have fun!").queue();
+                Inhouse.hostChannel.sendMessage("Room #" + getCurrentRoom() + " Game #" + (total++ + 1) + "! Good luck and have fun!").queue();
+                Inhouse.hostChannel.sendFile(new File("temp2.png")).queue();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -1313,10 +1312,8 @@ public class Hub
 
                 MessageEmbed winEmbed = createWinEmbed(winners, oldWinnerElos);
                 Inhouse.hostChannel.sendMessage(winEmbed).complete();
-                Inhouse.hostChannel.sendFile(new File("temp.png"), "Blue side").queue();
                 MessageEmbed lossEmbed = createLossEmbed(losers, oldLoserElos);
                 Inhouse.hostChannel.sendMessage(lossEmbed).complete();
-                Inhouse.hostChannel.sendFile(new File("temp.png"), "Red side").queue();
 
                 ladder.write();
                 game.clear();
@@ -1614,6 +1611,23 @@ public class Hub
                 .complete();
     }
 
+    public int getCurrentRoom()
+    {
+        if (rooms[2].isRunning())
+        {
+            return 3;
+        }
+        else if (rooms[1].isRunning())
+        {
+            return 2;
+        }
+        else if (rooms[0].isRunning())
+        {
+            return 1;
+        }
+        return 1;
+    }
+
     private void setCurrentRoom()
     {
         if (!rooms[0].isRunning())
@@ -1735,7 +1749,8 @@ public class Hub
             }
         }
         catch (RiotApiException | IllegalArgumentException e){
-            return "?";
+            System.out.println(e);
+            rank = "?";
         }
         return rank;
     }
@@ -1808,10 +1823,6 @@ public class Hub
             ImageIO.write(background, "png", new File("temp.png"));
             g.dispose();
 
-            //final String uuid = UUID.randomUUID().toString();
-            //cloudinary.uploader().upload("temp.png", ObjectUtils.asMap("public_id", uuid));
-            //final String generate = cloudinary.url().generate(uuid + ".png");
-
             int total = 0;
             for (Player player : ladder.getLadder())
             {
@@ -1821,9 +1832,9 @@ public class Hub
             total /= 10;
 
             EmbedBuilder imageEmbed = new EmbedBuilder();
-            //imageEmbed.setImage(generate);
             imageEmbed.setColor(new Color(0, 0, 195));
             imageEmbed.setAuthor("Victory! Game #" + total + "", iconLink, iconLink);
+            Inhouse.hostChannel.sendFile(new File("temp.png")).complete();
             return imageEmbed.build();
         }
         catch (IOException e)
@@ -1862,10 +1873,6 @@ public class Hub
             ImageIO.write(background, "png", new File("temp.png"));
             g.dispose();
 
-            //final String uuid = UUID.randomUUID().toString();
-            //cloudinary.uploader().upload("temp.png", ObjectUtils.asMap("public_id", uuid));
-            //final String generate = cloudinary.url().generate(uuid + ".png");
-
             int total = 0;
             for (Player player : ladder.getLadder())
             {
@@ -1874,9 +1881,9 @@ public class Hub
 
             total /= 10;
             EmbedBuilder imageEmbed = new EmbedBuilder();
-            //imageEmbed.setImage(generate);
             imageEmbed.setColor(new Color(195, 23, 19));
             imageEmbed.setAuthor("Defeat! Game #" + total + "", iconLink, iconLink);
+            Inhouse.hostChannel.sendFile(new File("temp.png")).queue();
             System.out.println("---------------------------------------------------");
             return imageEmbed.build();
         }
