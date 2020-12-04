@@ -21,22 +21,20 @@ public class Inhouse extends ListenerAdapter{
     public static Date nextDecayCheck;
     private static Hub hub;
 
-    private static final String staffchatId = "784242930776145930";
-    private static final String hostingchatId = "784242827047600168";
-    private static final String chatId = "784203074058715198";
-    private static final String deletechatId = "784242866800164904";
+    public static final String staffchatId = "784242930776145930";
+    public static final String hostingchatId = "784242827047600168";
+    public static final String chatId = "784203074058715198";
+    public static final String deletechatId = "784242866800164904";
 
-    public static void main(String args[]) throws LoginException
+    public static void main(String args[]) throws LoginException, InterruptedException
     {
-        hub = new Hub();
-        jda = JDABuilder.createDefault("NzExMDY3NjczNjg0ODY5MTgw.Xr9neA.eVMng9D87Y-WWf0JoYGOxP0oDU4").build();
+        jda = JDABuilder.createDefault("NzExMDY3NjczNjg0ODY5MTgw.Xr9neA.eVMng9D87Y-WWf0JoYGOxP0oDU4").build().awaitReady();
         jda.addEventListener(new Inhouse());
-
         hostChannel = jda.getTextChannelById(hostingchatId);
         chatChannel = jda.getTextChannelById(chatId);
         staffChannel = jda.getTextChannelById(staffchatId);
         deletedChannel = jda.getTextChannelById(deletechatId);
-
+        hub = new Hub();
         Decay decayChecker = new Decay(hub);
         decayChecker.run();
         hub.initDates();
@@ -102,7 +100,7 @@ public class Inhouse extends ListenerAdapter{
                             if (permissable(event.getMember())) {
                                 hub.undo(event.getMessage());
                             }
-                        } else if (event.getMessage().getContentRaw().startsWith("!game ")) {
+                        } else if (event.getMessage().getContentRaw().startsWith("!room ")) {
                             if (permissable(event.getMember())) {
                                 hub.declareWinner(event.getMessage());
                             }
@@ -292,7 +290,7 @@ public class Inhouse extends ListenerAdapter{
     {
         for (Role role : member.getRoles())
         {
-            if (role.getName().equals("OPG Moderator"))
+            if (role.getName().equals("Inhouse mod"))
             {
                 return true;
             }
