@@ -5,6 +5,8 @@ apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'com.github.johnrengelman.shadow'
 
+mainClassName = 'bot.Inhouse'
+
 allprojects {
     repositories {
         maven { url 'https://jitpack.io' }
@@ -22,6 +24,7 @@ dependencies {
     compileClasspath "com.github.jengelman.gradle.plugins:shadow:6.1.0"
     compile 'com.github.taycaldwell:riot-api-java:4.3.0'
     compile 'com.opencsv:opencsv:5.3'
+    implementation 'com.google.code.gson:gson:2.8.6'
 }
 
 buildscript {
