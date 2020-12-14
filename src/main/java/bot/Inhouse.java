@@ -290,7 +290,7 @@ public class Inhouse extends ListenerAdapter{
     {
         for (Role role : member.getRoles())
         {
-            if (role.getName().equals("Inhouse mod"))
+            if (role.getName().equals("Coach"))
             {
                 return true;
             }
