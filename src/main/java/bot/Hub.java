@@ -135,7 +135,7 @@ public class Hub
                 host(host, message, false);
                 if (!ladder.exists(host.getUser().getId()))
                 {
-                    Player player = new Player(host.getUser().getId(), realIgn, 2400, 0, 0, 0, false, getRank(realIgn));
+                    Player player = new Player(host.getUser().getId(), realIgn, 2400, 0, 0, 0, false/*, getRank(realIgn)*/);
                     Inhouse.chatChannel.sendMessage(String.format("<@%s> registered to ladder with **%s**.",
                             host.getUser().getId(), realIgn)).complete();
                     currentRoom.addPlayer(player);
@@ -720,7 +720,7 @@ public class Hub
         cmdBuilder.setTitle("Bot Commands");
         cmdBuilder.addField("!host","Host an empty lobby", false);
         cmdBuilder.addField("!cancel","Cancel a host", false);
-        cmdBuilder.addField("!draft","Start drafting when lobby is full", false);
+        cmdBuilder.addField("!captains","Start drafting with captains picking when lobby is full", false);
         cmdBuilder.addField("!random","Randomly draft players in a lobby", false);
         cmdBuilder.addField("!remove discord@","Kick a player from a full lobby", false);
         cmdBuilder.addField("!room # blue/red","Input win for match and side", false);
@@ -750,15 +750,15 @@ public class Hub
         EmbedBuilder cmdBuilder = new EmbedBuilder();
         cmdBuilder.setColor(new Color(28, 112, 255));
         cmdBuilder.setTitle("Bot Commands");
-        cmdBuilder.addField("!ign/!join ign","Sign up to host with your ign", true);
-        cmdBuilder.addField("!drop","Drop from unfilled lobby", true);
-        cmdBuilder.addField("!stats","Displays your stats", true);
-        cmdBuilder.addField("!games","Shows you the current games", true);
-        cmdBuilder.addField("!lobbies","Shows you the current games", true);
+        cmdBuilder.addField("!join","Sign up to host with your ign", false);
+        cmdBuilder.addField("!drop","Drop from unfilled lobby", false);
+        cmdBuilder.addField("!stats","Displays your stats", false);
+        cmdBuilder.addField("!games","Shows you the current games", false);
+        cmdBuilder.addField("!lobbies","Shows you the current games", false);
         //cmdBuilder.addField("!decay","Displays the next decay check", true);
-        cmdBuilder.addField("!most","Shows you the players that have no life", true);
-        cmdBuilder.addField("!mostwins","Shows you the players that have the most wins", true);
-        cmdBuilder.addField("!ladder #","Displays ladder page, no number shows first page", true);
+        cmdBuilder.addField("!most","Shows you the players that have no life", false);
+        cmdBuilder.addField("!mostwins","Shows you the players that have the most wins", false);
+        cmdBuilder.addField("!ladder #","Displays ladder page, no number shows first page", false);
         cmdBuilder.setFooter("Today at " + formatter.format(date), iconLink);
         msg.getChannel().sendMessage(cmdBuilder.build()).complete();
     }
@@ -768,13 +768,13 @@ public class Hub
         if (!ladder.exists(message.getAuthor().getId())) {
             String realIgn = validateIgn(ign);
             Player player = new Player(member.getUser().getId(), realIgn, 2400, 0, 0,
-                    0, false, getRank(realIgn));
+                    0, false/*, getRank(realIgn)*/);
             Inhouse.chatChannel.sendMessage(String.format("<@%s> registered to ladder with register as **" +
                     player.getIgn() + "**.", member.getUser().getId())).complete();
             ladder.addPlayerToLadder(player);
             ladder.write();
             message.getChannel().sendMessage(String.format("<@%s> you are now registered to the ladder. " +
-                    "Use !stats in <#784203074058715198> to see your standing!", member.getUser().getId())).complete();
+                    "Use !stats in <#"+Inhouse.chatId+"> to see your standing!", member.getUser().getId())).complete();
         }
         else {
             message.getChannel().sendMessage(String.format("<@%s> you are already registered to the ladder. " +
@@ -899,7 +899,7 @@ public class Hub
     {
         for (Role role : member.getRoles())
         {
-            if (role.getName().equals("Inhouse mod"))
+            if (role.getName().equals("Coach"))
             {
                 return true;
             }
@@ -937,7 +937,7 @@ public class Hub
                     }
                 }
             }
-            else if (permissable(message.getMember()) && message.getContentRaw().equals("!draft"))
+            else if (permissable(message.getMember()) && message.getContentRaw().equals("!captains"))
             {
                 System.out.println("("+ currentRoom.host.getUser().getName() + ") started draft");
                 switchInput(Input.PICKORDER);
@@ -1310,10 +1310,12 @@ public class Hub
                     }
                 }
 
-                MessageEmbed winEmbed = createWinEmbed(winners, oldWinnerElos);
-                Inhouse.hostChannel.sendMessage(winEmbed).complete();
-                MessageEmbed lossEmbed = createLossEmbed(losers, oldLoserElos);
-                Inhouse.hostChannel.sendMessage(lossEmbed).complete();
+                createWinEmbed(winners, oldWinnerElos);
+                createLossEmbed(losers, oldLoserElos);
+                //MessageEmbed winEmbed = createWinEmbed(winners, oldWinnerElos);
+                //Inhouse.hostChannel.sendMessage(winEmbed).complete();
+                //MessageEmbed lossEmbed = createLossEmbed(losers, oldLoserElos);
+                //Inhouse.hostChannel.sendMessage(lossEmbed).complete();
 
                 ladder.write();
                 game.clear();
@@ -1458,7 +1460,7 @@ public class Hub
         }
         else
         {
-            hostPing = Inhouse.hostChannel.sendMessage("@lolinhouse \n").complete();
+            hostPing = Inhouse.hostChannel.sendMessage("<@&494929485158940692> <@&737770473114566666> <@&747310230395813898> \n").complete();
             hostMessage = Inhouse.hostChannel.sendMessage(hostEmbed.build()).complete();
         }
     }
@@ -1590,16 +1592,16 @@ public class Hub
         EmbedBuilder roster = new EmbedBuilder();
         roster.setTitle("Inhouse Game");
         roster.addField("__Signed Up Players for Current Game__",
-                "```yaml\n 1.  " + currentRoom.players.get(0).getIgn() + "(" + currentRoom.players.get(0).getRank() + ")" + "\n" +
-                        " 2.  " + currentRoom.players.get(1).getIgn() + "(" + currentRoom.players.get(1).getRank() + ")" + "\n" +
-                        " 3.  " + currentRoom.players.get(2).getIgn() + "(" + currentRoom.players.get(2).getRank() + ")" + "\n" +
-                        " 4.  " + currentRoom.players.get(3).getIgn() + "(" + currentRoom.players.get(3).getRank() + ")" + "\n" +
-                        " 5.  " + currentRoom.players.get(4).getIgn() + "(" + currentRoom.players.get(4).getRank() + ")" + "\n" +
-                        " 6.  " + currentRoom.players.get(5).getIgn() + "(" + currentRoom.players.get(5).getRank() + ")" + "\n" +
-                        " 7.  " + currentRoom.players.get(6).getIgn() + "(" + currentRoom.players.get(6).getRank() + ")" + "\n" +
-                        " 8.  " + currentRoom.players.get(7).getIgn() + "(" + currentRoom.players.get(7).getRank() + ")" + "\n" +
-                        " 9.  " + currentRoom.players.get(8).getIgn() + "(" + currentRoom.players.get(8).getRank() + ")" + "\n" +
-                        " 10. " + currentRoom.players.get(9).getIgn() + "(" + currentRoom.players.get(9).getRank() + ")" + "```"
+                "```yaml\n 1.  " + currentRoom.players.get(0).getIgn() /*+ "(" + currentRoom.players.get(0).getRank() + ")"*/ + "\n" +
+                        " 2.  " + currentRoom.players.get(1).getIgn() /*+ "(" + currentRoom.players.get(1).getRank() + ")"*/ + "\n" +
+                        " 3.  " + currentRoom.players.get(2).getIgn() /*+ "(" + currentRoom.players.get(2).getRank() + ")"*/ + "\n" +
+                        " 4.  " + currentRoom.players.get(3).getIgn() /*+ "(" + currentRoom.players.get(3).getRank() + ")"*/ + "\n" +
+                        " 5.  " + currentRoom.players.get(4).getIgn() /*+ "(" + currentRoom.players.get(4).getRank() + ")"*/ + "\n" +
+                        " 6.  " + currentRoom.players.get(5).getIgn() /*+ "(" + currentRoom.players.get(5).getRank() + ")"*/ + "\n" +
+                        " 7.  " + currentRoom.players.get(6).getIgn() /*+ "(" + currentRoom.players.get(6).getRank() + ")"*/ + "\n" +
+                        " 8.  " + currentRoom.players.get(7).getIgn() /*+ "(" + currentRoom.players.get(7).getRank() + ")"*/ + "\n" +
+                        " 9.  " + currentRoom.players.get(8).getIgn() /*+ "(" + currentRoom.players.get(8).getRank() + ")"*/ + "\n" +
+                        " 10. " + currentRoom.players.get(9).getIgn() /*+ "(" + currentRoom.players.get(9).getRank() + ")"*/ + "```"
                 , false);
         roster.setColor(new Color(0, 153, 255));
         roster.setFooter("Host: " + currentRoom.host.getEffectiveName(),
@@ -1607,7 +1609,7 @@ public class Hub
         rosterMessage = Inhouse.hostChannel.sendMessage(roster.build()).complete();
         rosterPing = Inhouse.hostChannel.sendMessage("**Lobby Full.** Wait for " +
                 currentRoom.host.getAsMention() +
-                " to begin the draft phase with **!draft**. Or if you want to randomize teams go with **!random**")
+                " to begin the draft phase with captains picking use **!captains**. Or if you want to randomize teams go with **!random**")
                 .complete();
     }
 
@@ -1727,7 +1729,7 @@ public class Hub
         for (Player p : ladder.getLadder())
         {
             Player copy = new Player(p.getId(), p.getIgn(), p.getElo(), p.getWins(), p.getLosses(), p.getStreak(),
-                    p.getPrev(), p.getRank());
+                    p.getPrev()/*, p.getRank()*/);
             copy.setMember(p.getMember());
             copy.setLastPlayedStr(p.getLastPlayedStr());
             backupLadder.add(copy);
@@ -1794,7 +1796,7 @@ public class Hub
         }
     }
 
-    private MessageEmbed createWinEmbed(List<Player> winners, List<Integer> elos)
+    private void createWinEmbed(List<Player> winners, List<Integer> elos)
     {
         try
         {
@@ -1831,20 +1833,20 @@ public class Hub
 
             total /= 10;
 
-            EmbedBuilder imageEmbed = new EmbedBuilder();
-            imageEmbed.setColor(new Color(0, 0, 195));
-            imageEmbed.setAuthor("Victory! Game #" + total + "", iconLink, iconLink);
+            //EmbedBuilder imageEmbed = new EmbedBuilder();
+            //imageEmbed.setColor(new Color(0, 0, 195));
+            Inhouse.hostChannel.sendMessage("Victory! Game #" + total + "").complete();
             Inhouse.hostChannel.sendFile(new File("temp.png")).complete();
-            return imageEmbed.build();
+            //return imageEmbed.build();
         }
         catch (IOException e)
         {
             e.printStackTrace();
-            return null;
+            //return null;
         }
     }
 
-    private MessageEmbed createLossEmbed(List<Player> losers, List<Integer> elos)
+    private void createLossEmbed(List<Player> losers, List<Integer> elos)
     {
         try
         {
@@ -1880,17 +1882,18 @@ public class Hub
             }
 
             total /= 10;
-            EmbedBuilder imageEmbed = new EmbedBuilder();
-            imageEmbed.setColor(new Color(195, 23, 19));
-            imageEmbed.setAuthor("Defeat! Game #" + total + "", iconLink, iconLink);
+            //EmbedBuilder imageEmbed = new EmbedBuilder();
+            //imageEmbed.setColor(new Color(195, 23, 19));
+            //imageEmbed.setAuthor("Defeat! Game #" + total + "", iconLink, iconLink);
+            Inhouse.hostChannel.sendMessage("Defeat! Game #" + total + "").complete();
             Inhouse.hostChannel.sendFile(new File("temp.png")).queue();
             System.out.println("---------------------------------------------------");
-            return imageEmbed.build();
+            //return imageEmbed.build();
         }
         catch (IOException e)
         {
             e.printStackTrace();
-            return null;
+            //return null;
         }
 
     }
