@@ -38,10 +38,10 @@ public class Player implements Comparable<Player>
 
     @CsvBindByName(column = "prev")
     private boolean prev;
-
+/*
     @CsvBindByName(column = "rank")
     private String rank;
-
+*/
     private Member member;
     private LocalDate lastPlayed;
     private LocalDate decayDate;
@@ -51,7 +51,8 @@ public class Player implements Comparable<Player>
 
     }
 
-    Player(String _id, String _ign, int _elo, int _wins, int _losses, int _streak, boolean _prev, String _rank)
+    //Player(String _id, String _ign, int _elo, int _wins, int _losses, int _streak, boolean _prev, String _rank)
+    Player(String _id, String _ign, int _elo, int _wins, int _losses, int _streak, boolean _prev)
     {
         lastPlayedStr = "12-31-2020";
         id = _id;
@@ -61,7 +62,7 @@ public class Player implements Comparable<Player>
         losses = _losses;
         streak = _streak;
         prev = _prev;
-        rank = _rank;
+        //rank = _rank;
     }
 
     void win()
@@ -200,7 +201,7 @@ public class Player implements Comparable<Player>
     {
         return streak;
     }
-
+    /*
     public String getRank()
     {
         return rank;
@@ -210,7 +211,7 @@ public class Player implements Comparable<Player>
     {
         rank = _rank;
     }
-
+    */
     Member getMember()
     {
         return member;
