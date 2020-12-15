@@ -21,10 +21,10 @@ public class Inhouse extends ListenerAdapter{
     public static Date nextDecayCheck;
     private static Hub hub;
 
-    public static final String staffchatId = "784242930776145930";
-    public static final String hostingchatId = "784242827047600168";
-    public static final String chatId = "784203074058715198";
-    public static final String deletechatId = "784242866800164904";
+    public static final String staffchatId = "787893369519079434";
+    public static final String hostingchatId = "787893187993141268";
+    public static final String chatId = "787893307728068618";
+    public static final String deletechatId = "787893468021784636";
 
     public static void main(String args[]) throws LoginException, InterruptedException
     {
