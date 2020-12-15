@@ -167,9 +167,9 @@ public class Hub
                     member.getAsMention())).complete();
             return;
         }
-        if (currentActiveHost && !currentRoom.isFull()) //&& !currentRoom.contains(member.getUser().getId()) &&
-                //!rooms[0].contains(member.getUser().getId()) && !rooms[1].contains(member.getUser().getId()) &&
-                //!rooms[2].contains(member.getUser().getId()) && !rooms[3].contains(member.getUser().getId())) //CHECK FOR DOUBLE
+        if (currentActiveHost && !currentRoom.isFull() && !currentRoom.contains(member.getUser().getId()) &&
+                !rooms[0].contains(member.getUser().getId()) && !rooms[1].contains(member.getUser().getId()) &&
+                !rooms[2].contains(member.getUser().getId()) && !rooms[3].contains(member.getUser().getId())) //CHECK FOR DOUBLE
         {
             if (!ladder.exists(member.getUser().getId()))
             {
